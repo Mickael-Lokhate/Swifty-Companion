@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -98,8 +100,16 @@ class _SearchState extends State<Search> {
           searchError = false;
         });
         final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
-        print('Response: $response');
-      } catch (error) {
+        final jsonResponse = jsonDecode(response);
+      } on ExpirationException catch(e) {
+        debugPrint('token expire');
+        // _intraAuthorization();
+        // print('ask another token');
+        // _searchLogin(val);
+        // print('relaunch login');
+        return;
+      }
+      catch (error) {
         setState(() {
           searchError = true;
         });
