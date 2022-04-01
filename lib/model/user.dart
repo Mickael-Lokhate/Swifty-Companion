@@ -1,125 +1,94 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user.g.dart';
+
+@JsonSerializable()
+class Cursus {
+  final int id;
+  final String name;
+
+  Cursus(this.id, this.name);
+  factory Cursus.fromJson(Map<String, dynamic> json) => _$CursusFromJson(json);
+}
+
+@JsonSerializable()
+class CursusUsers {
+  final int id;
+  final double level;
+  final Cursus cursus;
+
+  CursusUsers(this.id, this.cursus, this.level);
+  factory CursusUsers.fromJson(Map<String, dynamic> json) => _$CursusUsersFromJson(json);
+}
+
+@JsonSerializable()
+class Campus {
+  final int id;
+  final String name;
+  final String country;
+  final int users_count;
+
+  Campus(this.id, this.name, this.users_count, this.country);
+  factory Campus.fromJson(Map<String, dynamic> json) => _$CampusFromJson(json);
+}
+
+@JsonSerializable()
+class Titles {
+  final int id;
+  final String name;
+
+  Titles(this.id, this.name);
+  factory Titles.fromJson(Map<String, dynamic> json) => _$TitlesFromJson(json);
+}
+
+@JsonSerializable()
+class Project {
+  final int id;
+  final String name;
+
+  Project(this.id, this.name);
+
+  factory Project.fromJson(Map<String, dynamic> json) => _$ProjectFromJson(json);
+}
+
+@JsonSerializable()
+class ProjectUser {
+  final int id;
+  final int? final_mark;
+  final String status;
+  final bool? validated;
+  final Project project;
+
+  ProjectUser(this.id, this.status, this.project, this.final_mark, this.validated);
+
+  factory ProjectUser.fromJson(Map<String, dynamic> json) => _$ProjectUserFromJson(json);
+}
+
+@JsonSerializable()
 class User {
   final int     id;
   final String  email;
+  final String  url;
   final String  login;
   final String  first_name;
   final String  last_name;
-  final String  display_name;
+  final String  displayname;
   final String  image_url;
-  final bool    staff;
+  final bool?    staff;
   final int     correction_point;
   final String  pool_month;
   final String  pool_year;
   final String  location;
-  final int     wallet;
+  final List<CursusUsers>  cursus_users;
+  final List<Campus>  campus;
+  final List<Titles>  titles;
+  final List<ProjectUser> projects_users;
+  final int wallet;
 
-  User(this.id, this.email, this.login, this.first_name,
-        this.last_name, this.display_name, this.image_url,
+  User(this.id, this.email, this.login, this.first_name, this.wallet,
+        this.last_name, this.displayname, this.image_url, this.url,
         this.staff, this.correction_point, this.pool_month,
-        this.pool_year, this.location, this.wallet);
+        this.pool_year, this.location, this.cursus_users, this.campus, this.titles, this.projects_users);
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
-/*
-{
-  "id": 2,
-  "email": "andre@42.fr",
-  "login": "andre",
-  "first_name": "André",
-  "last_name": "Aubin",
-  "usual_first_name": "Juliette",
-  "url": "https://api.intra.42.fr/v2/users/andre",
-  "phone": null,
-  "displayname": "André Aubin",
-  "usual_full_name": "Juliette Aubin",
-  "image_url": "https://cdn.intra.42.fr/images/default.png",
-  "staff?": false,
-  "correction_point": 4,
-  "pool_month": "july",
-  "pool_year": "2016",
-  "location": null,
-  "wallet": 0,
-  "anonymize_date": "2021-02-20T00:00:00.000+03:00",
-  "groups": [],
-  "cursus_users": [
-    {
-      "id": 2,
-      "begin_at": "2017-05-14T21:37:50.172Z",
-      "end_at": null,
-      "grade": null,
-      "level": 0.0,
-      "skills": [],
-      "cursus_id": 1,
-      "has_coalition": true,
-      "user": {
-        "id": 2,
-        "login": "andre",
-        "url": "https://api.intra.42.fr/v2/users/andre"
-      },
-      "cursus": {
-        "id": 1,
-        "created_at": "2017-11-22T13:41:00.750Z",
-        "name": "Piscine C",
-        "slug": "piscine-c"
-      }
-    }
-  ],
-  "projects_users": [],
-  "languages_users": [
-    {
-      "id": 2,
-      "language_id": 3,
-      "user_id": 2,
-      "position": 1,
-      "created_at": "2017-11-22T13:41:03.638Z"
-    }
-  ],
-  "achievements": [],
-  "titles": [],
-  "titles_users": [],
-  "partnerships": [],
-  "patroned": [
-    {
-      "id": 4,
-      "user_id": 2,
-      "godfather_id": 15,
-      "ongoing": true,
-      "created_at": "2017-11-22T13:42:11.565Z",
-      "updated_at": "2017-11-22T13:42:11.572Z"
-    }
-  ],
-  "patroning": [],
-  "expertises_users": [
-    {
-      "id": 2,
-      "expertise_id": 3,
-      "interested": false,
-      "value": 2,
-      "contact_me": false,
-      "created_at": "2017-11-22T13:41:22.504Z",
-      "user_id": 2
-    }
-  ],
-  "campus": [
-    {
-      "id": 1,
-      "name": "Cluj",
-      "time_zone": "Europe/Bucharest",
-      "language": {
-        "id": 3,
-        "name": "Romanian",
-        "identifier": "ro",
-        "created_at": "2017-11-22T13:40:59.468Z",
-        "updated_at": "2017-11-22T13:41:26.139Z"
-      },
-      "users_count": 28,
-      "vogsphere_id": 1
-    }
-  ],
-  "campus_users": [
-    {
-      "id": 2,
-      "user_id": 2,
-      "campus_id": 1,
-      "is_primary": true
-    }
-  ]
-}*/

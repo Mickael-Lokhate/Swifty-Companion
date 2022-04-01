@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:swifty_companion/view/details.dart';
 
 class Search extends StatefulWidget {
   const Search({ Key? key }) : super(key: key);
@@ -101,6 +102,7 @@ class _SearchState extends State<Search> {
         });
         final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
         final jsonResponse = jsonDecode(response);
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Details(jsonResponse)));
       } on ExpirationException catch(e) {
         debugPrint('token expire : $e');
         setState(() {
