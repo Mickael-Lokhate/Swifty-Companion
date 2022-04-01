@@ -5,28 +5,39 @@ part 'user.g.dart';
 @JsonSerializable()
 class Cursus {
   final int id;
-  final String name;
+  final String? name;
 
   Cursus(this.id, this.name);
   factory Cursus.fromJson(Map<String, dynamic> json) => _$CursusFromJson(json);
 }
 
 @JsonSerializable()
+class Skills {
+  final int id;
+  final String? name;
+  final double? level;
+
+  Skills(this.id, this.name, this.level);
+ factory Skills.fromJson(Map<String, dynamic> json) => _$SkillsFromJson(json); 
+}
+
+@JsonSerializable()
 class CursusUsers {
   final int id;
-  final double level;
-  final Cursus cursus;
+  final double? level;
+  final Cursus? cursus;
+  final List<Skills>? skills;
 
-  CursusUsers(this.id, this.cursus, this.level);
+  CursusUsers(this.id, this.cursus, this.level, this.skills);
   factory CursusUsers.fromJson(Map<String, dynamic> json) => _$CursusUsersFromJson(json);
 }
 
 @JsonSerializable()
 class Campus {
   final int id;
-  final String name;
-  final String country;
-  final int users_count;
+  final String? name;
+  final String? country;
+  final int? users_count;
 
   Campus(this.id, this.name, this.users_count, this.country);
   factory Campus.fromJson(Map<String, dynamic> json) => _$CampusFromJson(json);
@@ -35,7 +46,7 @@ class Campus {
 @JsonSerializable()
 class Titles {
   final int id;
-  final String name;
+  final String? name;
 
   Titles(this.id, this.name);
   factory Titles.fromJson(Map<String, dynamic> json) => _$TitlesFromJson(json);
@@ -44,7 +55,7 @@ class Titles {
 @JsonSerializable()
 class Project {
   final int id;
-  final String name;
+  final String? name;
 
   Project(this.id, this.name);
 
@@ -55,9 +66,9 @@ class Project {
 class ProjectUser {
   final int id;
   final int? final_mark;
-  final String status;
+  final String? status;
   final bool? validated;
-  final Project project;
+  final Project? project;
 
   ProjectUser(this.id, this.status, this.project, this.final_mark, this.validated);
 
@@ -67,23 +78,23 @@ class ProjectUser {
 @JsonSerializable()
 class User {
   final int     id;
-  final String  email;
-  final String  url;
-  final String  login;
-  final String  first_name;
-  final String  last_name;
-  final String  displayname;
-  final String  image_url;
+  final String?  email;
+  final String?  url;
+  final String?  login;
+  final String?  first_name;
+  final String?  last_name;
+  final String?  displayname;
+  final String?  image_url;
   final bool?    staff;
-  final int     correction_point;
-  final String  pool_month;
-  final String  pool_year;
-  final String  location;
-  final List<CursusUsers>  cursus_users;
-  final List<Campus>  campus;
-  final List<Titles>  titles;
-  final List<ProjectUser> projects_users;
-  final int wallet;
+  final int?     correction_point;
+  final String?  pool_month;
+  final String?  pool_year;
+  final String?  location;
+  final List<CursusUsers>?  cursus_users;
+  final List<Campus>?  campus;
+  final List<Titles>?  titles;
+  final List<ProjectUser>? projects_users;
+  final int? wallet;
 
   User(this.id, this.email, this.login, this.first_name, this.wallet,
         this.last_name, this.displayname, this.image_url, this.url,

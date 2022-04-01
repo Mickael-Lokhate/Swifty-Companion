@@ -22,9 +22,9 @@ class _DetailsState extends State<Details> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.login.toUpperCase()),
+        title: Text(user.login!.toUpperCase()),
       ),
-      body: Center(child: Text('HEllo ${user.login}'),),
+      body: Center(child: Text('HEllo ${user.login} - ${user.cursus_users?[1].skills}'),),
     );
   }
 }
