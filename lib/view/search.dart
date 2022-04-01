@@ -14,21 +14,48 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   Client? client;
+  late TextEditingController searchController;
+  bool searchError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Swifty Companion'),
-      ),
-      body: _buildSearchBar(),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Swifty Companion'),
+        ),
+        body: _buildBody(),
+      )
     );
   }
 
-  Widget _buildSearchBar() {
-     if (client != null) {
-      return const Center(child: Text('Search'),);
-    } else {
+  Widget _buildBody() {
+     if (client != null && !searchError) {
+      return _buildSearchBar();
+    } else if (client != null && searchError) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildSearchBar(),
+          const Text('Sorry, no user corresponding...', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
+        ],
+      );
+    } 
+    else {
       _intraAuthorization();
       return Center(
         child: Column(
@@ -40,9 +67,45 @@ class _SearchState extends State<Search> {
           ],
         ),
       );
-        
-      
     } 
+  }
+
+  Widget _buildSearchBar() {
+    return Center(
+      child: ListTile(
+        autofocus: true,
+        leading: const Icon(Icons.search, color: Colors.black54, size: 28,),
+        title: TextField(
+          autofocus: true,
+          autocorrect: true,
+          controller: searchController,
+          decoration: const InputDecoration(
+            hintText: 'Search a login...',
+            hintStyle: TextStyle(color: Colors.black54, fontSize: 18, fontStyle: FontStyle.italic),
+            border: InputBorder.none,
+          ),
+          style: const TextStyle(color: Colors.black54),
+          onSubmitted: _searchLogin,
+        ),
+      ),
+    );
+  }
+
+  void _searchLogin(String val) async {
+    if (client != null) {
+      try {
+        setState(() {
+          searchError = false;
+        });
+        final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
+        print('Response: $response');
+      } catch (error) {
+        setState(() {
+          searchError = true;
+        });
+        print('Error on search request : $error');
+      }
+    }
   }
 
   void _intraAuthorization() async {
