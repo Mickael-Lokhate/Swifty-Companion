@@ -3,37 +3,32 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:path_provider/path_provider.dart';
+import 'package:swifty_companion/view/search.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   oauth2.Client? client;
 
   @override
   Widget build(BuildContext context) {
-    _intraAuthorization();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Center(child: Text('Swifty Companion'),),
+      home: const Search()
     );
-  }
-
-  void _intraAuthorization() async {
-    final authorizationEndpoint = Uri.parse('https://api.intra.42.fr/oauth/authorize');
-    final uid = dotenv.env['FT_UID'];
-    final secret = dotenv.env['FT_SECRET'];
-    final credentialsFile = File('~/.swifty/cred.json');
-
-    client = await oauth2.clientCredentialsGrant(authorizationEndpoint, uid, secret);
-    if (client != null) {
-      await credentialsFile.writeAsString(client!.credentials.toJson());
-    }
   }
 }
