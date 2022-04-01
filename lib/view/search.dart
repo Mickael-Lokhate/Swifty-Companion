@@ -17,7 +17,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   Client? client;
   late TextEditingController searchController;
-  bool searchError = false;
+  String searchError = '';
 
   @override
   void initState() {
@@ -45,15 +45,15 @@ class _SearchState extends State<Search> {
   }
 
   Widget _buildBody() {
-     if (client != null && !searchError) {
+     if (client != null && searchError.isEmpty) {
       return _buildSearchBar();
-    } else if (client != null && searchError) {
+    } else if (client != null && searchError.isNotEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildSearchBar(),
-          const Text('Sorry, no user corresponding...', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
+          Text('Sorry, $searchError...', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
         ],
       );
     } 
@@ -97,12 +97,15 @@ class _SearchState extends State<Search> {
     if (client != null) {
       try {
         setState(() {
-          searchError = false;
+          searchError = '';
         });
         final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
         final jsonResponse = jsonDecode(response);
       } on ExpirationException catch(e) {
-        debugPrint('token expire');
+        debugPrint('token expire : $e');
+        setState(() {
+          searchError = ' the token expire, please retry your search';
+        });
         // _intraAuthorization();
         // print('ask another token');
         // _searchLogin(val);
@@ -111,7 +114,7 @@ class _SearchState extends State<Search> {
       }
       catch (error) {
         setState(() {
-          searchError = true;
+          searchError = 'no user found';
         });
         print('Error on search request : $error');
       }
