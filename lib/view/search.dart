@@ -134,13 +134,16 @@ class _SearchState extends State<Search> {
 
     if (credentialsFile.existsSync()) {
       print('Reading credentials...');
-      var credentials = Credentials.fromJson(await credentialsFile.readAsString());
-      print('Access : ${credentials.accessToken} - Refresh : ${credentials.refreshToken} - Expiration : ${credentials.expiration}');
-      if (credentials.expiration!.isAfter(DateTime.now())) {
-        setState(() {
-          client = Client(credentials, identifier: dotenv.env['FT_UID'], secret: dotenv.env['FT_SECRET']);
-        });
-        return ;
+      var fileContent = await credentialsFile.readAsString();
+      if (fileContent.isNotEmpty) {
+        var credentials = Credentials.fromJson(fileContent);
+        print('Access : ${credentials.accessToken} - Refresh : ${credentials.refreshToken} - Expiration : ${credentials.expiration}');
+        if (credentials.expiration!.isAfter(DateTime.now())) {
+          setState(() {
+            client = Client(credentials, identifier: dotenv.env['FT_UID'], secret: dotenv.env['FT_SECRET']);
+          });
+          return ;
+        }
       }
     }
 

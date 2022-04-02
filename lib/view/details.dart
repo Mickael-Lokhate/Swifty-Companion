@@ -24,7 +24,7 @@ class _DetailsState extends State<Details> {
       appBar: AppBar(
         title: Text(user.login!.toUpperCase()),
       ),
-      body: Center(child: Text('HEllo ${user.login} - ${user.cursus_users?[1].skills}'),),
+      body: Center(child: Text('HEllo ${user.login} - ${user.cursus_users?[1].skills?[0].name}'),),
     );
   }
 }
