@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:swifty_companion/model/user.dart';
 
@@ -57,7 +56,7 @@ class _DetailsState extends State<Details> {
             child: const Text('Achievements', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
           ),
           const SizedBox(height: 10,),
-          SizedBox(height: 120, child: _buildAchievements()),
+          SizedBox(height: 150, child: _buildAchievements()),
         ],
       ),
     );
@@ -77,22 +76,32 @@ class _DetailsState extends State<Details> {
           imageUrl = 'https://api.intra.42.fr' + (achievs[index].image!);
         }
         Widget image = SvgPicture.network(imageUrl, width: 64, placeholderBuilder: (BuildContext context) => const Center(child: CircularProgressIndicator(),));
-        return Card(
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                child: Center(child: image),
-                radius: 32,
-              ),
-              Column(
-                children: [
-                  Text(achievs[index].name ?? '', style: const TextStyle(fontWeight: FontWeight.bold),),
-                  const SizedBox(height: 10,),
-                  Text(achievs[index].description ?? '')
-                ],
-              )
-            ],
+        return IntrinsicHeight(
+          child: Card(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: Center(child: image),
+                  radius: 32,
+                ),
+                Container(
+                  width: 200,
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(achievs[index].name ?? '', style: const TextStyle(fontWeight: FontWeight.bold),),
+                      const SizedBox(height: 10,),
+                      Text(achievs[index].description ?? '')
+                    ],
+                  ),
+                )
+                
+              ],
+            ),
           ),
         );
       }
@@ -208,7 +217,7 @@ class _DetailsState extends State<Details> {
                 Text('42 ' + user.campus![0].name! + ', ', style: const TextStyle(color: Colors.white54),),
                 Text(user.campus![0].country!, style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white54),),
                 const Text(' - ', style: TextStyle(color: Colors.white54),),
-                Text((user.location?.toUpperCase() ?? 'Not logged'), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white54),),
+                Text((user.location != null ? "At the `" + user.location!.toUpperCase() + '`' : 'Not logged'), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white54),),
               ],),
               const SizedBox(height: 10,),
               Row(

@@ -38,10 +38,19 @@ class _SearchState extends State<Search> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 49, 49, 49),
         appBar: AppBar(
           title: const Text('Swifty Companion'),
         ),
-        body: _buildBody(),
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: Image.asset("assets/images/bg.png").image
+            )
+          ),
+          child: _buildBody(),
+        )
       )
     );
   }
@@ -90,17 +99,16 @@ class _SearchState extends State<Search> {
     return Center(
       child: ListTile(
         autofocus: true,
-        leading: const Icon(Icons.search, color: Colors.black54, size: 28,),
+        leading: const Icon(Icons.search, color: Colors.white60, size: 28,),
         title: TextField(
-          autofocus: true,
           autocorrect: true,
           controller: searchController,
           decoration: const InputDecoration(
             hintText: 'Search a login...',
-            hintStyle: TextStyle(color: Colors.black54, fontSize: 18, fontStyle: FontStyle.italic),
+            hintStyle: TextStyle(color: Colors.white60, fontSize: 24, fontStyle: FontStyle.italic,),
             border: InputBorder.none,
           ),
-          style: const TextStyle(color: Colors.black54),
+          style: const TextStyle(color: Colors.white60, fontSize: 24),
           onSubmitted: _searchLogin,
         ),
       ),
@@ -117,14 +125,18 @@ class _SearchState extends State<Search> {
         setState(() {
           searchError = '';
         });
-        final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
+        final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/${val.toLowerCase()}'));
         final jsonResponse = jsonDecode(response);
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Details(jsonResponse)));
-        waiting = false;
+        setState(() {
+          waiting = false;
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Details(jsonResponse))); 
       } on ExpirationException catch(e) {
         debugPrint('token expire : $e');
         setState(() {
           searchError = ' the token expire, please retry your search';
+          waiting = false;
+          searchController.text = '';
         });
         _intraAuthorization();
         // print('ask another token');
@@ -135,6 +147,8 @@ class _SearchState extends State<Search> {
       catch (error) {
         setState(() {
           searchError = 'no user found';
+          waiting = false;
+          searchController.text = '';
         });
         print('Error on search request : $error');
       }
