@@ -1,4 +1,4 @@
-# swifty_companion
+# Swifty Companion v1.1 - Bug and UI fixes
 
 A new Flutter project.
 
