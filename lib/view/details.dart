@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:swifty_companion/model/user.dart';
 
@@ -218,7 +217,7 @@ class _DetailsState extends State<Details> {
                 Text('42 ' + user.campus![0].name! + ', ', style: const TextStyle(color: Colors.white54),),
                 Text(user.campus![0].country!, style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white54),),
                 const Text(' - ', style: TextStyle(color: Colors.white54),),
-                Text((user.location?.toUpperCase() ?? 'Not logged'), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white54),),
+                Text((user.location != null ? "At the `" + user.location!.toUpperCase() + '`' : 'Not logged'), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white54),),
               ],),
               const SizedBox(height: 10,),
               Row(
