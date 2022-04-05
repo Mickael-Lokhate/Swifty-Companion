@@ -37,6 +37,7 @@ CursusUsers _$CursusUsersFromJson(Map<String, dynamic> json) => CursusUsers(
       (json['skills'] as List<dynamic>?)
           ?.map((e) => Skills.fromJson(e as Map<String, dynamic>))
           .toList(),
+      json['end_at'] == null ? null : DateTime.parse(json['end_at'] as String),
     );
 
 Map<String, dynamic> _$CursusUsersToJson(CursusUsers instance) =>
@@ -45,6 +46,7 @@ Map<String, dynamic> _$CursusUsersToJson(CursusUsers instance) =>
       'level': instance.level,
       'cursus': instance.cursus,
       'skills': instance.skills,
+      'end_at': instance.end_at?.toIso8601String(),
     };
 
 Campus _$CampusFromJson(Map<String, dynamic> json) => Campus(
@@ -88,7 +90,7 @@ ProjectUser _$ProjectUserFromJson(Map<String, dynamic> json) => ProjectUser(
           ? null
           : Project.fromJson(json['project'] as Map<String, dynamic>),
       json['final_mark'] as int?,
-      json['validated'] as bool?,
+      json['validated?'] as bool?,
     );
 
 Map<String, dynamic> _$ProjectUserToJson(ProjectUser instance) =>
@@ -96,8 +98,23 @@ Map<String, dynamic> _$ProjectUserToJson(ProjectUser instance) =>
       'id': instance.id,
       'final_mark': instance.final_mark,
       'status': instance.status,
-      'validated': instance.validated,
+      'validated?': instance.validated,
       'project': instance.project,
+    };
+
+Achievements _$AchievementsFromJson(Map<String, dynamic> json) => Achievements(
+      json['id'] as int?,
+      json['name'] as String?,
+      json['description'] as String?,
+      json['image'] as String?,
+    );
+
+Map<String, dynamic> _$AchievementsToJson(Achievements instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'image': instance.image,
     };
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
@@ -127,6 +144,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       (json['projects_users'] as List<dynamic>?)
           ?.map((e) => ProjectUser.fromJson(e as Map<String, dynamic>))
           .toList(),
+      (json['achievements'] as List<dynamic>?)
+          ?.map((e) => Achievements.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -148,4 +168,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'titles': instance.titles,
       'projects_users': instance.projects_users,
       'wallet': instance.wallet,
+      'achievements': instance.achievements,
     };

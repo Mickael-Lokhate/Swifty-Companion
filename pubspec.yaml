@@ -37,6 +37,7 @@ dependencies:
   oauth2: ^2.0.0
   path_provider:
   json_annotation: ^4.4.0
+  flutter_svg: ^1.0.3
 
 dev_dependencies:
   build_runner: ^2.0.0

@@ -19,6 +19,7 @@ class _SearchState extends State<Search> {
   Client? client;
   late TextEditingController searchController;
   String searchError = '';
+  bool waiting = false;
 
   @override
   void initState() {
@@ -46,7 +47,19 @@ class _SearchState extends State<Search> {
   }
 
   Widget _buildBody() {
-     if (client != null && searchError.isEmpty) {
+    if (client != null && waiting) {
+      return Center (
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(),
+            Text('Getting the user from 42 API...', style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),)
+          ],
+        )
+      );
+    }
+    else if (client != null && searchError.isEmpty) {
       return _buildSearchBar();
     } else if (client != null && searchError.isNotEmpty) {
       return Column(
@@ -57,7 +70,7 @@ class _SearchState extends State<Search> {
           Text('Sorry, $searchError...', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
         ],
       );
-    } 
+    }
     else {
       _intraAuthorization();
       return Center(
@@ -95,7 +108,11 @@ class _SearchState extends State<Search> {
   }
 
   void _searchLogin(String val) async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (client != null) {
+      setState(() {
+        waiting = true;
+      });
       try {
         setState(() {
           searchError = '';
@@ -103,12 +120,13 @@ class _SearchState extends State<Search> {
         final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
         final jsonResponse = jsonDecode(response);
         Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Details(jsonResponse)));
+        waiting = false;
       } on ExpirationException catch(e) {
         debugPrint('token expire : $e');
         setState(() {
           searchError = ' the token expire, please retry your search';
         });
-        // _intraAuthorization();
+        _intraAuthorization();
         // print('ask another token');
         // _searchLogin(val);
         // print('relaunch login');

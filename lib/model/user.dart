@@ -27,8 +27,9 @@ class CursusUsers {
   final double? level;
   final Cursus? cursus;
   final List<Skills>? skills;
+  final DateTime? end_at;
 
-  CursusUsers(this.id, this.cursus, this.level, this.skills);
+  CursusUsers(this.id, this.cursus, this.level, this.skills, this.end_at);
   factory CursusUsers.fromJson(Map<String, dynamic> json) => _$CursusUsersFromJson(json);
 }
 
@@ -76,6 +77,18 @@ class ProjectUser {
 }
 
 @JsonSerializable()
+class Achievements {
+  final int? id;
+  final String? name;
+  final String? description;
+  final String? image;
+
+  Achievements(this.id, this.name, this.description, this.image);
+
+  factory Achievements.fromJson(Map<String, dynamic> json) => _$AchievementsFromJson(json);
+}
+
+@JsonSerializable()
 class User {
   final int     id;
   final String?  email;
@@ -95,11 +108,12 @@ class User {
   final List<Titles>?  titles;
   final List<ProjectUser>? projects_users;
   final int? wallet;
+  final List<Achievements>? achievements;
 
   User(this.id, this.email, this.login, this.first_name, this.wallet,
         this.last_name, this.displayname, this.image_url, this.url,
         this.staff, this.correction_point, this.pool_month,
-        this.pool_year, this.location, this.cursus_users, this.campus, this.titles, this.projects_users);
+        this.pool_year, this.location, this.cursus_users, this.campus, this.titles, this.projects_users, this.achievements);
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
