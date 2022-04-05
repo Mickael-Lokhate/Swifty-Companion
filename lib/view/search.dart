@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:swifty_companion/view/details.dart';
 
 class Search extends StatefulWidget {
   const Search({ Key? key }) : super(key: key);
@@ -17,7 +18,8 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   Client? client;
   late TextEditingController searchController;
-  bool searchError = false;
+  String searchError = '';
+  bool waiting = false;
 
   @override
   void initState() {
@@ -45,18 +47,30 @@ class _SearchState extends State<Search> {
   }
 
   Widget _buildBody() {
-     if (client != null && !searchError) {
+    if (client != null && waiting) {
+      return Center (
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(),
+            Text('Getting the user from 42 API...', style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),)
+          ],
+        )
+      );
+    }
+    else if (client != null && searchError.isEmpty) {
       return _buildSearchBar();
-    } else if (client != null && searchError) {
+    } else if (client != null && searchError.isNotEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildSearchBar(),
-          const Text('Sorry, no user corresponding...', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
+          Text('Sorry, $searchError...', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
         ],
       );
-    } 
+    }
     else {
       _intraAuthorization();
       return Center(
@@ -94,16 +108,25 @@ class _SearchState extends State<Search> {
   }
 
   void _searchLogin(String val) async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (client != null) {
+      setState(() {
+        waiting = true;
+      });
       try {
         setState(() {
-          searchError = false;
+          searchError = '';
         });
         final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/$val'));
         final jsonResponse = jsonDecode(response);
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Details(jsonResponse)));
+        waiting = false;
       } on ExpirationException catch(e) {
-        debugPrint('token expire');
-        // _intraAuthorization();
+        debugPrint('token expire : $e');
+        setState(() {
+          searchError = ' the token expire, please retry your search';
+        });
+        _intraAuthorization();
         // print('ask another token');
         // _searchLogin(val);
         // print('relaunch login');
@@ -111,7 +134,7 @@ class _SearchState extends State<Search> {
       }
       catch (error) {
         setState(() {
-          searchError = true;
+          searchError = 'no user found';
         });
         print('Error on search request : $error');
       }
@@ -129,13 +152,16 @@ class _SearchState extends State<Search> {
 
     if (credentialsFile.existsSync()) {
       print('Reading credentials...');
-      var credentials = Credentials.fromJson(await credentialsFile.readAsString());
-      print('Access : ${credentials.accessToken} - Refresh : ${credentials.refreshToken} - Expiration : ${credentials.expiration}');
-      if (credentials.expiration!.isAfter(DateTime.now())) {
-        setState(() {
-          client = Client(credentials, identifier: dotenv.env['FT_UID'], secret: dotenv.env['FT_SECRET']);
-        });
-        return ;
+      var fileContent = await credentialsFile.readAsString();
+      if (fileContent.isNotEmpty) {
+        var credentials = Credentials.fromJson(fileContent);
+        print('Access : ${credentials.accessToken} - Refresh : ${credentials.refreshToken} - Expiration : ${credentials.expiration}');
+        if (credentials.expiration!.isAfter(DateTime.now())) {
+          setState(() {
+            client = Client(credentials, identifier: dotenv.env['FT_UID'], secret: dotenv.env['FT_SECRET']);
+          });
+          return ;
+        }
       }
     }
 
