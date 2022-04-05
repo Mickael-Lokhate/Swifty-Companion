@@ -1,4 +1,4 @@
-# Swifty Companion v1.1 - Bug and UI fixes
+# Swifty Companion [![mlokhate's 42 swifty-companion Score](https://badge42.vercel.app/api/v2/cl1mdvtu6009009mod72g373r/project/2548875)](https://github.com/JaeSeoKim/badge42)
 
 A new Flutter project.
 
