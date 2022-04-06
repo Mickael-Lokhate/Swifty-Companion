@@ -97,7 +97,7 @@ class _DetailsState extends State<Details> {
         Widget image = SvgPicture.network(imageUrl, width: 64, placeholderBuilder: (BuildContext context) => const Center(child: CircularProgressIndicator(),));
         return IntrinsicHeight(
           child: Card(
-            color: Colors.teal,
+            color: Colors.black87,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -113,9 +113,9 @@ class _DetailsState extends State<Details> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(achievs[index].name ?? '', style: const TextStyle(fontWeight: FontWeight.bold),),
+                      Text(achievs[index].name ?? '', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal),),
                       const SizedBox(height: 10,),
-                      Text(achievs[index].description ?? '')
+                      Text(achievs[index].description ?? '', style: const TextStyle(color: Colors.white54))
                     ],
                   ),
                 )
@@ -146,14 +146,14 @@ class _DetailsState extends State<Details> {
       itemCount: skills.length,
       itemBuilder: (BuildContext context, int index) {
         return Card(
-          color: Colors.teal,
+          color: Colors.black87,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Row(
               children: [
-                Text(skills[index].name ?? '', style: const TextStyle(fontWeight: FontWeight.bold),),
+                Text(skills[index].name ?? '', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal),),
                 const Text(' - '),
-                Text(skills[index].level.toString(), style: const TextStyle(fontStyle: FontStyle.italic)),
+                Text(skills[index].level.toString(), style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white54)),
               ],
             )
           )
@@ -171,11 +171,11 @@ class _DetailsState extends State<Details> {
       scrollDirection: Axis.horizontal,
       itemCount: projects.length,
       itemBuilder: (BuildContext context, int index) {
-        Color colorValidation = const Color.fromARGB(255, 84, 94, 99);
+        Color colorValidation = Colors.white54;
         String? projectUrl;
 
         if (projects[index].validated != null && projects[index].validated == true){
-          colorValidation = Colors.greenAccent;
+          colorValidation = Colors.teal;
         } else if (projects[index].validated != null && projects[index].validated == false) {
           colorValidation = const Color.fromARGB(255, 173, 0, 0);
         }
@@ -184,7 +184,7 @@ class _DetailsState extends State<Details> {
           projectUrl = 'https://projects.intra.42.fr/projects/' + user.projects_users![index].project!.slug!;
         }
         return Card(
-          color: Colors.teal,
+          color: Colors.black87,
           child: Padding(
             padding: const EdgeInsets.all(5),
             child: Column(
@@ -192,7 +192,7 @@ class _DetailsState extends State<Details> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text((projects[index].project?.name ?? 'undefined'), style: TextStyle(fontWeight: FontWeight.bold, color: colorValidation),),
-                Text(projects[index].status ?? 'unkown', style: const TextStyle(fontStyle: FontStyle.italic),),
+                Text(projects[index].status ?? 'unkown', style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white54),),
                 Text(projects[index].final_mark != null ? projects[index].final_mark.toString() + '%' : '', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorValidation),),
                 projectUrl != null ? ElevatedButton(child: const Text('View project',), style: ElevatedButton.styleFrom(primary: const Color.fromARGB(255, 92, 92, 92)), onPressed: () async {
                   if (await canLaunch(projectUrl!)) {
