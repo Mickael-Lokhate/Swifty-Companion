@@ -76,11 +76,13 @@ Map<String, dynamic> _$TitlesToJson(Titles instance) => <String, dynamic>{
 Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
       json['id'] as int,
       json['name'] as String?,
+      json['slug'] as String?,
     );
 
 Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'slug': instance.slug,
     };
 
 ProjectUser _$ProjectUserFromJson(Map<String, dynamic> json) => ProjectUser(
@@ -127,7 +129,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       json['displayname'] as String?,
       json['image_url'] as String?,
       json['url'] as String?,
-      json['staff'] as bool?,
+      json['staff?'] as bool?,
       json['correction_point'] as int?,
       json['pool_month'] as String?,
       json['pool_year'] as String?,
@@ -158,7 +160,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'last_name': instance.last_name,
       'displayname': instance.displayname,
       'image_url': instance.image_url,
-      'staff': instance.staff,
+      'staff?': instance.staff,
       'correction_point': instance.correction_point,
       'pool_month': instance.pool_month,
       'pool_year': instance.pool_year,

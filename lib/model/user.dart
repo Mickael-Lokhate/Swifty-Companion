@@ -57,8 +57,9 @@ class Titles {
 class Project {
   final int id;
   final String? name;
+  final String? slug;
 
-  Project(this.id, this.name);
+  Project(this.id, this.name, this.slug);
 
   factory Project.fromJson(Map<String, dynamic> json) => _$ProjectFromJson(json);
 }

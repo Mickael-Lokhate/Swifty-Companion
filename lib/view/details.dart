@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:swifty_companion/model/user.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Details extends StatefulWidget {
   const Details(this.user, { Key? key }) : super(key: key);
@@ -25,6 +26,24 @@ class _DetailsState extends State<Details> {
     return Scaffold(
       appBar: AppBar(
         title: Text(user.login!.toUpperCase()),
+        actions: [
+          TextButton(
+            child: const Text('Profile on 42', style: TextStyle(color: Colors.white),),
+            onPressed: () async {
+              final String url = 'https://profile.intra.42.fr/users/' + user.login!; 
+              if ((await canLaunch(url))) {
+                if (!(await launch(url))) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Can\'t go to the 42 intra profile'))
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Can\'t go to the 42 intra profile'))
+                  );
+              }
+            },)
+        ]
       ),
       body: _buildBody(),
     );
@@ -42,7 +61,7 @@ class _DetailsState extends State<Details> {
             child: const Text('Projects', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
           ),
           const SizedBox(height: 10,),
-          SizedBox(height: 100, child: _buildProjects()),
+          SizedBox(height: 150, child: _buildProjects()),
           const SizedBox(height: 15,),
           Container(
             padding: const EdgeInsets.fromLTRB(15, 5, 5, 5),
@@ -78,6 +97,7 @@ class _DetailsState extends State<Details> {
         Widget image = SvgPicture.network(imageUrl, width: 64, placeholderBuilder: (BuildContext context) => const Center(child: CircularProgressIndicator(),));
         return IntrinsicHeight(
           child: Card(
+            color: Colors.teal,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -151,24 +171,38 @@ class _DetailsState extends State<Details> {
       scrollDirection: Axis.horizontal,
       itemCount: projects.length,
       itemBuilder: (BuildContext context, int index) {
-        MaterialColor bgColor = Colors.grey;
+        Color colorValidation = const Color.fromARGB(255, 84, 94, 99);
+        String? projectUrl;
+
         if (projects[index].validated != null && projects[index].validated == true){
-          bgColor = Colors.green;
+          colorValidation = Colors.greenAccent;
         } else if (projects[index].validated != null && projects[index].validated == false) {
-          bgColor = Colors.red;
+          colorValidation = const Color.fromARGB(255, 173, 0, 0);
+        }
+
+        if (user.projects_users != null && user.projects_users![index].project != null && user.projects_users![index].project!.slug != null) {
+          projectUrl = 'https://projects.intra.42.fr/projects/' + user.projects_users![index].project!.slug!;
         }
         return Card(
-          color: bgColor,
-          elevation: 5,
+          color: Colors.teal,
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text((projects[index].project?.name ?? 'undefined'), style: const TextStyle(fontWeight: FontWeight.bold),),
+                Text((projects[index].project?.name ?? 'undefined'), style: TextStyle(fontWeight: FontWeight.bold, color: colorValidation),),
                 Text(projects[index].status ?? 'unkown', style: const TextStyle(fontStyle: FontStyle.italic),),
-                Text(projects[index].final_mark != null ? projects[index].final_mark.toString() + '%' : '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                Text(projects[index].final_mark != null ? projects[index].final_mark.toString() + '%' : '', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorValidation),),
+                projectUrl != null ? ElevatedButton(child: const Text('View project',), style: ElevatedButton.styleFrom(primary: const Color.fromARGB(255, 92, 92, 92)), onPressed: () async {
+                  if (await canLaunch(projectUrl!)) {
+                    if (!await launch(projectUrl)) {
+                       ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Can\'t go to the 42 project page'))
+                      );
+                    }
+                  }
+                },) : const Text('Can\'t show project page'),
               ],
             ),
           ),
@@ -186,7 +220,12 @@ class _DetailsState extends State<Details> {
         }
       }
     }
-    
+    String nameRow = (user.first_name ?? '') + ' ' + (user.last_name ?? '') + ' - ' + (user.login?.toUpperCase() ?? '');
+    String role = '-- STUDENT --';
+    if (user.staff != null && user.staff == true) {
+      nameRow = '[' + (user.first_name ?? '') + ' ' + (user.last_name ?? '') + ' - ' + (user.login?.toUpperCase() ?? '') + ']';
+      role = '-- STAFF --';
+    }
     return Container(
       color: Colors.black87,
       padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
@@ -207,8 +246,9 @@ class _DetailsState extends State<Details> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 15,),
+              Text(role, style: const TextStyle(color: Colors.teal)),
               Row(
-                children: [Text((user.first_name ?? '') + ' ' + (user.last_name ?? '') + ' - ' + (user.login?.toUpperCase() ?? ''), style: const TextStyle(color: Colors.white54),)],
+                children: [Text(nameRow, style: const TextStyle(color: Colors.white54),)],
               ),
               const SizedBox(height: 10,),
               Text(user.email ?? 'No email', style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white30),),
