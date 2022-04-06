@@ -174,16 +174,16 @@ class _SearchState extends State<Search> {
     final authorizationEndpoint = Uri.parse('https://api.intra.42.fr/oauth/token');
     final uid = dotenv.env['FT_UID'];
     final secret = dotenv.env['FT_SECRET'];
-    print('Creating file...');
+    debugPrint('Creating file...');
     final credentialsFile = await File('$path/.swifty/cred.json').create(recursive: true);
-    print('File created');
+    debugPrint('File created');
 
     if (credentialsFile.existsSync()) {
-      print('Reading credentials...');
+      debugPrint('Reading credentials...');
       var fileContent = await credentialsFile.readAsString();
       if (fileContent.isNotEmpty) {
         var credentials = Credentials.fromJson(fileContent);
-        print('Access : ${credentials.accessToken} - Refresh : ${credentials.refreshToken} - Expiration : ${credentials.expiration}');
+        debugPrint('Access : ${credentials.accessToken} - Refresh : ${credentials.refreshToken} - Expiration : ${credentials.expiration}');
         if (credentials.expiration!.isAfter(DateTime.now())) {
           setState(() {
             client = Client(credentials, identifier: dotenv.env['FT_UID'], secret: dotenv.env['FT_SECRET']);
@@ -194,17 +194,17 @@ class _SearchState extends State<Search> {
     }
 
     try {
-      print('Ask authorization to 42...');
+      debugPrint('Ask authorization to 42...');
       final tmpClient = await clientCredentialsGrant(authorizationEndpoint, uid, secret);
       setState(() {
         client = tmpClient;
       });
     } catch (e) {
-      print('error auth : $e');
+      debugPrint('error auth : $e');
     }
     
     if (client != null && credentialsFile.existsSync()) {
-      print('Writing credentials...');
+      debugPrint('Writing credentials...');
       await credentialsFile.writeAsString(client!.credentials.toJson());
     }
   }
