@@ -139,9 +139,23 @@ class _SearchState extends State<Search> {
           searchController.text = '';
         });
         _intraAuthorization();
-        // print('ask another token');
-        // _searchLogin(val);
-        // print('relaunch login');
+        try {
+          setState(() {
+            searchError = '';
+            waiting = true;
+          });
+          final String response = await client!.read(Uri.parse('https://api.intra.42.fr/v2/users/${val.toLowerCase()}'));
+          final jsonResponse = jsonDecode(response);
+          setState(() {
+            waiting = false;
+          });
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => Details(jsonResponse))); 
+        } catch (error) {
+          setState(() {
+            waiting = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sorry can\'t fetch the API, please try again in few seconds')));
+        }
         return;
       }
       catch (error) {

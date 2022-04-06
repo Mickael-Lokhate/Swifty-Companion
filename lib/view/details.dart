@@ -245,7 +245,6 @@ class _DetailsState extends State<Details> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 15,),
               Text(role, style: const TextStyle(color: Colors.teal)),
               Row(
                 children: [Text(nameRow, style: const TextStyle(color: Colors.white54),)],
